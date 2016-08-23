@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static com.brainesgames.td.util.Fade.shade;
+import static com.brainesgames.td.util.ImageMap.shade;
 
 public class Map {
     //image stuff
@@ -32,6 +32,7 @@ public class Map {
     //animation stuff
     int loseColourIdx;
     static Color[] loseColours;
+    int shadeCount;
 
     static{
         loseColours = new Color[51];
@@ -58,6 +59,7 @@ public class Map {
         for(int i=0; i < 11; i++)units.add(new Unit(100, new V2i(64,64), -50 * i));
 
         loseColourIdx = 0;
+        shadeCount = 0;
     }
 
     public static Map load(String file){
@@ -153,7 +155,7 @@ public class Map {
             g.setFont(Font.font("monospace", FontWeight.BLACK, 120));
             g.fillText("YOU LOSE",20,250);
             if(loseColourIdx == loseColours.length) loseColourIdx = 0;
-            shade(reader, writer, (int)image.getWidth(),(int)image.getHeight(), 0.95);
+            if(shadeCount++ < 256)shade(reader, writer, (int)image.getWidth(),(int)image.getHeight(), 0.99);
         }
     }
 
