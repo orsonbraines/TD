@@ -52,7 +52,7 @@ public class Main extends Application {
             path[i] = new V2i(i,(int)(-180*cos(2 * PI * i / 320)) + 240);
         }
 
-        map = Map.load("maps/map1.txt");
+        map = Map.load("map1");
         g = canvas.getGraphicsContext2D();
 
         map.draw(g);

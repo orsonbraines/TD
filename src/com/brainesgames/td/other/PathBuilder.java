@@ -59,7 +59,7 @@ public class PathBuilder extends Application{
         button2.setOnAction(event -> {
             V2i[] path = createPath();
             try {
-                PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream("maps/map1.txt",true)));
+                PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream("maps/maps.txt",true)));
                 ps.print("\r\npath:");
                 Map.printPath(ps, path);
                 ps.close();

@@ -1,5 +1,6 @@
 package com.brainesgames.td.game;
 
+import com.brainesgames.geom.Line;
 import com.brainesgames.linalg.V2i;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -40,10 +41,15 @@ public class Map {
         for(int i = 24; i >= 0; i--)loseColours[50 - i] = Color.rgb(i*10, 0, 0);
     }
 
+    /**
+     *
+     * @param imageFile Name of the image file from the imgs directory
+     * @param path
+     */
     public Map(String imageFile, V2i[] path){
         this.imageFile = imageFile;
         try {
-            Image img = new Image(new FileInputStream(imageFile));
+            Image img = new Image(new FileInputStream("imgs/"+imageFile));
             reader = img.getPixelReader();
             image = new WritableImage(reader, (int)img.getWidth(), (int)img.getHeight());
             reader = image.getPixelReader();
@@ -62,12 +68,19 @@ public class Map {
         shadeCount = 0;
     }
 
-    public static Map load(String file){
+    public static Map load(String mapName){
         ArrayList<String> lines = new ArrayList<>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            BufferedReader br = new BufferedReader(new FileReader("data/maps.txt"));
             String line;
-            while((line = br.readLine()) != null)lines.add(line);
+            boolean startedMap = false;
+            while((line = br.readLine()) != null){
+                if(startedMap){
+                    if(line.charAt(0) == '$' && line.substring(1).equals(mapName)) break;
+                    lines.add(line);
+                }
+                else if(line.charAt(0) == '$' && line.substring(1).equals(mapName)) startedMap=true;
+            }
             br.close();
         }catch (IOException ex){
             ex.printStackTrace();
