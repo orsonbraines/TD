@@ -1,3 +1,2 @@
 - tower graphics
-- multiple unit
-- map txt
+- fade map background at death

@@ -3,13 +3,13 @@ package com.brainesgames.td.game;
 import com.brainesgames.linalg.V2i;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import static java.lang.Math.PI;
-import static java.lang.Math.cos;
 
 public class Map {
     String imageFile;
@@ -18,6 +18,15 @@ public class Map {
     V2i[] path;
     ArrayList<Tower> towers;
     ArrayList<Unit> units;
+    int hp;
+    int loseColourIdx;
+    static Color[] loseColours;
+
+    static{
+        loseColours = new Color[51];
+        for(int i = 0; i < 26; i++)loseColours[i] = Color.rgb(i*10, 0, 0);
+        for(int i = 24; i >= 0; i--)loseColours[50 - i] = Color.rgb(i*10, 0, 0);
+    }
 
     public Map(String imageFile, V2i[] path){
         this.imageFile = imageFile;
@@ -28,10 +37,12 @@ public class Map {
         }
         size = new V2i(640,480);
         this.path = path;
-
+        hp = 100;
         towers = new ArrayList<>();
         units = new ArrayList<>();
-        units.add(new Unit(100,new V2i(64,64)));
+        for(int i=0; i < 11; i++)units.add(new Unit(100, new V2i(64,64), -50 * i));
+
+        loseColourIdx = 0;
     }
 
     public static Map load(String file){
@@ -96,10 +107,17 @@ public class Map {
     }
 
     public void move(){
-        for(Unit unit : units){
-            if(unit.position == path.length - 1)unit.setPosition(0);
+        for(int i =0; i<units.size(); i++){
+            Unit unit = units.get(i);
+            if(unit.position == path.length - 1){
+                hp -= unit.value;
+                units.remove(i);
+                i--;
+            }
             else unit.incPosition();
         }
+
+        if(hp <= 0)System.out.println("YOU LOSE!!!!!!!!");
     }
 
     public Image getImage() {
@@ -108,12 +126,22 @@ public class Map {
 
     public void draw(GraphicsContext g){
         g.drawImage(image, 0, 0);
-        for(Tower tower : towers) tower.draw(g);
-        for(Unit unit : units){
-            V2i loc = path[unit.position];
-            //int width = unit.size.getX();
-            int height = unit.size.getY();
-            unit.draw(g, loc.getX(), loc.getY() - height / 2);
+        if(hp > 0) {
+            for (Tower tower : towers) tower.draw(g);
+            for (Unit unit : units) {
+                if (unit.position >= 0) {
+                    V2i loc = path[unit.position];
+                    //int width = unit.size.getX();
+                    int height = unit.size.getY();
+                    unit.draw(g, loc.getX(), loc.getY() - height / 2);
+                }
+            }
+        }
+        else{
+            g.setFill(loseColours[loseColourIdx++]);
+            g.setFont(Font.font("monospace", FontWeight.BLACK, 120));
+            g.fillText("YOU LOSE",20,250);
+            if(loseColourIdx == loseColours.length) loseColourIdx = 0;
         }
     }
 
@@ -122,5 +150,9 @@ public class Map {
         for(int i = 0; i < path.length; i++){
             out.print(path[i].getX() + " " + path[i].getY() + " ");
         }
+    }
+
+    public int getHp() {
+        return hp;
     }
 }

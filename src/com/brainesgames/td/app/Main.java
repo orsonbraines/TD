@@ -9,16 +9,32 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
-
-import java.util.Timer;
-import java.util.TimerTask;
-
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 
 public class Main extends Application {
     Map map;
     GraphicsContext g;
+
+    class AnimationLoop implements Runnable{
+        @Override
+        public void run() {
+            try {
+                while(true) {
+                    if (map.getHp() > 0) {
+                        map.move();
+                        Platform.runLater(() -> map.draw(g));
+                        Thread.sleep(25);
+                    } else {
+                        Platform.runLater(() -> map.draw(g));
+                        Thread.sleep(20);
+                    }
+                }
+            }catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public static void main(String[] args){
         launch(args);
@@ -45,17 +61,8 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
 
-        Timer timer = new Timer(true);
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                animate();
-            }
-        }, 25, 25);
-    }
-
-    void animate(){
-        map.move();
-        Platform.runLater(()->map.draw(g));
+        Thread animationThread = new Thread(new AnimationLoop(),"Animation Thread");
+        animationThread.setDaemon(true);
+        animationThread.start();
     }
 }

@@ -12,8 +12,9 @@ public class Unit {
     int hp;
     V2i size;
     int position;
+    int value;
 
-    public Unit(int hp, V2i size) {
+    public Unit(int hp, V2i size, int position) {
         try {
             image = new Image(new FileInputStream("imgs/unit1.png"));
         } catch (FileNotFoundException e) {
@@ -21,7 +22,8 @@ public class Unit {
         }
         this.hp = hp;
         this.size = size;
-        position = 0;
+        this.position = position;
+        value = 10;
     }
 
     public void setPosition(int position) {
