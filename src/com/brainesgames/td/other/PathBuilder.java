@@ -4,6 +4,7 @@ import com.brainesgames.geom.Circle;
 import com.brainesgames.geom.Line;
 import com.brainesgames.linalg.V2f;
 import com.brainesgames.linalg.V2i;
+import com.brainesgames.td.game.Map;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -15,8 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -57,7 +57,15 @@ public class PathBuilder extends Application{
 
         Button button2 = new Button("Create Path");
         button2.setOnAction(event -> {
-            printPath(createPath());
+            V2i[] path = createPath();
+            try {
+                PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream("maps/map1.txt",true)));
+                ps.print("\r\npath:");
+                Map.printPath(ps, path);
+                ps.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         });
 
         canvas.setOnMousePressed(event -> {
@@ -124,14 +132,5 @@ public class PathBuilder extends Application{
             path[i] = new V2i(Math.round(p.getX()),Math.round(p.getY()));
         }
         return path;
-    }
-
-    void printPath(V2i[] path){
-        System.out.print("[");
-        for(int i = 0; i < path.length; i++){
-            System.out.print(path[i]);
-            if(i != path.length - 1)System.out.print(',');
-        }
-        System.out.println("]");
     }
 }

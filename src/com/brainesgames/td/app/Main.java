@@ -1,5 +1,6 @@
 package com.brainesgames.td.app;
 
+import com.brainesgames.linalg.V2i;
 import com.brainesgames.td.game.Map;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -11,6 +12,9 @@ import javafx.stage.Stage;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static java.lang.Math.PI;
+import static java.lang.Math.cos;
 
 public class Main extends Application {
     Map map;
@@ -27,7 +31,12 @@ public class Main extends Application {
 
         System.out.println(System.getProperty("user.dir"));
 
-        map = new Map();
+        V2i[] path = new V2i[640];
+        for(int i = 0; i < 640; i++){
+            path[i] = new V2i(i,(int)(-180*cos(2 * PI * i / 320)) + 240);
+        }
+
+        map = Map.load("maps/map1.txt");
         g = canvas.getGraphicsContext2D();
 
         map.draw(g);
