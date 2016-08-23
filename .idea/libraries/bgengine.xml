@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="bgengine">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/bgengine.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
