@@ -3,6 +3,9 @@ package com.brainesgames.td.game;
 import com.brainesgames.linalg.V2i;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -11,14 +14,22 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static com.brainesgames.td.util.Fade.shade;
+
 public class Map {
+    //image stuff
     String imageFile;
-    Image image;
-    V2i size;
+    WritableImage image;
+    PixelReader reader;
+    PixelWriter writer;
+    //sub objects
     V2i[] path;
     ArrayList<Tower> towers;
     ArrayList<Unit> units;
+    //state stuff
     int hp;
+    V2i size;
+    //animation stuff
     int loseColourIdx;
     static Color[] loseColours;
 
@@ -31,7 +42,11 @@ public class Map {
     public Map(String imageFile, V2i[] path){
         this.imageFile = imageFile;
         try {
-            image = new Image(new FileInputStream(imageFile));
+            Image img = new Image(new FileInputStream(imageFile));
+            reader = img.getPixelReader();
+            image = new WritableImage(reader, (int)img.getWidth(), (int)img.getHeight());
+            reader = image.getPixelReader();
+            writer = image.getPixelWriter();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -79,11 +94,9 @@ public class Map {
     static V2i[] parsePath(String pathStr){
         try{
             Scanner sc = new Scanner(pathStr);
-            System.out.println(pathStr);
             int n = sc.nextInt();
             V2i[] parsed = new V2i[n];
             for(int i = 0; i < n; i++){
-                System.out.println(i);
                 int x = sc.nextInt();
                 int y = sc.nextInt();
                 parsed[i] = new V2i(x,y);
@@ -116,8 +129,6 @@ public class Map {
             }
             else unit.incPosition();
         }
-
-        if(hp <= 0)System.out.println("YOU LOSE!!!!!!!!");
     }
 
     public Image getImage() {
@@ -131,9 +142,9 @@ public class Map {
             for (Unit unit : units) {
                 if (unit.position >= 0) {
                     V2i loc = path[unit.position];
-                    //int width = unit.size.getX();
+                    int width = unit.size.getX();
                     int height = unit.size.getY();
-                    unit.draw(g, loc.getX(), loc.getY() - height / 2);
+                    unit.draw(g, loc.getX() - width / 2, loc.getY() - height / 2);
                 }
             }
         }
@@ -142,6 +153,7 @@ public class Map {
             g.setFont(Font.font("monospace", FontWeight.BLACK, 120));
             g.fillText("YOU LOSE",20,250);
             if(loseColourIdx == loseColours.length) loseColourIdx = 0;
+            shade(reader, writer, (int)image.getWidth(),(int)image.getHeight(), 0.95);
         }
     }
 

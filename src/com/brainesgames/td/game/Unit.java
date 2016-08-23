@@ -7,6 +7,9 @@ import javafx.scene.image.Image;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import static com.brainesgames.td.util.Fade.fade;
+import static com.brainesgames.td.util.Fade.shade;
+
 public class Unit {
     Image image;
     int hp;
@@ -16,7 +19,7 @@ public class Unit {
 
     public Unit(int hp, V2i size, int position) {
         try {
-            image = new Image(new FileInputStream("imgs/unit1.png"));
+            image = shade(new Image(new FileInputStream("imgs/unit1.png")),0.5);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

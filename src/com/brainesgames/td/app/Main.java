@@ -24,7 +24,7 @@ public class Main extends Application {
                     if (map.getHp() > 0) {
                         map.move();
                         Platform.runLater(() -> map.draw(g));
-                        Thread.sleep(25);
+                        Thread.sleep(2);
                     } else {
                         Platform.runLater(() -> map.draw(g));
                         Thread.sleep(20);

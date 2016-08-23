@@ -6,10 +6,10 @@ import javafx.scene.image.Image;
 
 public class Tower {
     Image image;
-    int hp;
+    int range;
     V2i loc,size;
 
     public void draw(GraphicsContext g){
-        g.drawImage(image, loc.getX(), loc.getY(), size.getX(), size.getY());
+        g.drawImage(image, loc.getX() - size.getX() / 2, loc.getY() - size.getY() / 2, size.getX(), size.getY());
     }
 }
