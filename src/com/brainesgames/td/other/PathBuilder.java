@@ -20,6 +20,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.brainesgames.linalg.V2f.sub;
+
 public class PathBuilder extends Application{
     ArrayList<Circle> points;
     GraphicsContext g;
@@ -59,7 +61,7 @@ public class PathBuilder extends Application{
         button2.setOnAction(event -> {
             V2i[] path = createPath();
             try {
-                PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream("maps/maps.txt",true)));
+                PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream("data/maps.txt",true)));
                 ps.print("\r\npath:");
                 Map.printPath(ps, path);
                 ps.close();
@@ -118,10 +120,10 @@ public class PathBuilder extends Application{
         for(int i = 0; i < points.size() - 1; i++){
             Circle p1 = points.get(i);
             Circle p2 = points.get(i + 1);
-            Line l = new Line(p1.getX(),p1.getY(),p2.getX(),p2.getY());
-            int numPieces = (int)(l.length() / 4);
+            V2f dif = sub(p2.getC(),p1.getC());
+            int numPieces = (int)(dif.mag() / 4);
             for(int j = 0; j < numPieces;j++){
-                pathList.add(V2f.add(p1.getC(),V2f.scale((float)j/numPieces,l.getDif())));
+                pathList.add(V2f.add(p1.getC(),V2f.scale((float)j/numPieces,dif)));
             }
         }
         pathList.add(points.get(points.size() - 1).getC());
